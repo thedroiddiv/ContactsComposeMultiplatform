@@ -1,11 +1,13 @@
 package com.plcoding.contactscomposemultiplatform.contacts.data
 
+import app.cash.sqldelight.coroutines.asFlow
+import app.cash.sqldelight.coroutines.mapToList
 import com.plcoding.contactscomposemultiplatform.contacts.domain.Contact
 import com.plcoding.contactscomposemultiplatform.contacts.domain.ContactDataSource
 import com.plcoding.contactscomposemultiplatform.core.data.ImageStorage
 import com.plcoding.contactscomposemultiplatform.database.ContactDatabase
-import com.squareup.sqldelight.runtime.coroutines.asFlow
-import com.squareup.sqldelight.runtime.coroutines.mapToList
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -23,7 +25,7 @@ class SqlDelightContactDataSource(
         return queries
             .getContacts()
             .asFlow()
-            .mapToList()
+            .mapToList(Dispatchers.IO)
             .map { contactEntities ->
                 supervisorScope {
                     contactEntities
@@ -39,7 +41,7 @@ class SqlDelightContactDataSource(
         return queries
             .getRecentContacts(amount.toLong())
             .asFlow()
-            .mapToList()
+            .mapToList(Dispatchers.IO)
             .map { contactEntities ->
                 supervisorScope {
                     contactEntities

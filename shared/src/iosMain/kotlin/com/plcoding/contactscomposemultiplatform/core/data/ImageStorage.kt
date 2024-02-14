@@ -1,5 +1,6 @@
 package com.plcoding.contactscomposemultiplatform.core.data
 
+import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.addressOf
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.refTo
@@ -28,6 +29,7 @@ actual class ImageStorage {
         expandTilde = true
     ).first() as NSString
 
+    @OptIn(ExperimentalForeignApi::class)
     actual suspend fun saveImage(bytes: ByteArray): String {
         return withContext(Dispatchers.Default) {
             val fileName = NSUUID.UUID().UUIDString + ".jpg"
@@ -48,6 +50,7 @@ actual class ImageStorage {
         }
     }
 
+    @OptIn(ExperimentalForeignApi::class)
     actual suspend fun getImage(fileName: String): ByteArray? {
         return withContext(Dispatchers.Default) {
             memScoped {
@@ -61,6 +64,7 @@ actual class ImageStorage {
         }
     }
 
+    @OptIn(ExperimentalForeignApi::class)
     actual suspend fun deleteImage(fileName: String) {
         withContext(Dispatchers.Default) {
             fileManager.removeItemAtPath(fileName, null)
