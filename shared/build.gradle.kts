@@ -14,6 +14,8 @@ kotlin {
         }
     }
 
+    jvm()
+
     targets.withType(org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget::class.java).all {
         binaries.withType(org.jetbrains.kotlin.gradle.plugin.mpp.Framework::class.java).all {
             export("dev.icerock.moko:mvvm-core:0.16.1")
@@ -80,6 +82,14 @@ kotlin {
             iosArm64Test.dependsOn(this)
             iosSimulatorArm64Test.dependsOn(this)
         }
+
+        // Desktop JVM
+        val jvmMain by getting
+        jvmMain.dependencies {
+            implementation("app.cash.sqldelight:sqlite-driver:2.0.1")
+            implementation("org.jetbrains.skiko:skiko-awt-runtime-$skikoTarget:0.7.70")
+            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.7.3")
+        }
     }
 }
 
@@ -110,3 +120,23 @@ dependencies {
     commonMainApi("dev.icerock.moko:mvvm-flow:0.16.1")
     commonMainApi("dev.icerock.moko:mvvm-flow-compose:0.16.1")
 }
+
+
+val skikoTarget: String
+    get() {
+        val osName = System.getProperty("os.name")
+        val targetOs = when {
+            osName == "Mac OS X" -> "macos"
+            osName.startsWith("Win") -> "windows"
+            osName.startsWith("Linux") -> "linux"
+            else -> error("Unsupported OS: $osName")
+        }
+
+        val targetArch = when (val osArch = System.getProperty("os.arch")) {
+            "x86_64", "amd64" -> "x64"
+            "aarch64" -> "arm64"
+            else -> error("Unsupported arch: $osArch")
+        }
+
+        return "${targetOs}-${targetArch}"
+    }

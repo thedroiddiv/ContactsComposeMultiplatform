@@ -33,4 +33,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "ContactsComposeMultiplatform"
 include(":androidContactsMP")
+include(":desktopContactsMP")
 include(":shared")
