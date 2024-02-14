@@ -6,10 +6,19 @@ import app.cash.sqldelight.db.SqlCursor
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.driver.jdbc.sqlite.JdbcSqliteDriver
 import com.plcoding.contactscomposemultiplatform.database.ContactDatabase
+import java.io.File
+import java.util.Properties
 
 actual class DatabaseDriverFactory {
     actual fun create(): SqlDriver {
-        val driver = JdbcSqliteDriver("jdbc:sqlite:contact.db")
+        val userHome = System.getProperty("user.home")
+        val appDir = File("$userHome/.contactsApp/db")
+        if (!appDir.exists()) {
+            appDir.mkdirs()
+        }
+        val driver = JdbcSqliteDriver(
+            url = JdbcSqliteDriver.IN_MEMORY + "${appDir.path}/contacts.db"
+        )
         driver.initializeDatabase()
         return driver
     }
